@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Public readable configurations, founders, aboutUs, policies, courses, exams, subscription plans
+    match /settings/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /founders/{founderId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /courses/{courseId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /exams/{examId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /subscription_plans/{planId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    match /exam_registrations/{registrationId} {
+      allow read, write: if true;
+    }
+
+    match /payments/{paymentId} {
+      allow read, write: if true;
+    }
+
+    match /certificates/{certificateId} {
+      allow read, write: if true;
+    }
+
+    match /notifications/{notificationId} {
+      allow read, write: if true;
+    }
+
+    match /subscriptions/{subscriptionId} {
+      allow read, write: if true;
+    }
+
+    match /payment_methods/{methodId} {
+      allow read, write: if true;
+    }
+
+    match /policies/{policyId} {
+      allow read, write: if true;
+    }
+
+    match /student_learnings/{learningId} {
+      allow read, write: if true;
+    }
+
+    // Default fallback to allow application reads and writes
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

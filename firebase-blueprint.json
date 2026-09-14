@@ -1,0 +1,56 @@
+{
+  "entities": {
+    "users": {
+      "title": "User",
+      "description": "User profiles and learning progress",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "age": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "address": { "type": "string" },
+        "role": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "courses": {
+      "title": "Course",
+      "description": "Learning courses offered by Mocosart",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "duration": { "type": "string" },
+        "price": { "type": "number" },
+        "meetLink": { "type": "string" },
+        "isOnlineCourse": { "type": "boolean" },
+        "published": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["title", "description"]
+    },
+    "exams": {
+      "title": "Exam",
+      "description": "Certification exams",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "duration": { "type": "string" },
+        "amount": { "type": "number" },
+        "venueType": { "type": "string" },
+        "venueAddress": { "type": "string" },
+        "mapCoordinates": { "type": "string" },
+        "questions": { "type": "array" },
+        "published": { "type": "boolean" }
+      },
+      "required": ["title", "amount"]
+    }
+  }
+}

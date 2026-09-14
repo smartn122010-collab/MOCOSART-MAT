@@ -1,0 +1,6 @@
+{
+  "name": "Mocosart",
+  "description": "Full-stack learning course and exam certification platform with user dashboard and admin management.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
