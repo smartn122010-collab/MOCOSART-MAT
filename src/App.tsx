@@ -291,6 +291,13 @@ export default function App() {
       }
     }, () => {});
 
+    const handleCustomGrowthUpdate = (e: any) => {
+      if (e.detail && Array.isArray(e.detail)) {
+        setGrowthMetrics(e.detail);
+      }
+    };
+    window.addEventListener('growth_metrics_updated', handleCustomGrowthUpdate);
+
     // Student Learnings listener
     const unsubStudentLearning = onSnapshot(collection(db, 'student_learning'), (snap) => {
       const items = snap.docs.map(d => ({ id: d.id, ...d.data() } as StudentLearning));
@@ -316,6 +323,7 @@ export default function App() {
       unsubPolicyRefund();
       unsubGrowth();
       unsubStudentLearning();
+      window.removeEventListener('growth_metrics_updated', handleCustomGrowthUpdate);
     };
   }, []);
 
@@ -407,6 +415,7 @@ export default function App() {
                 setAuthModalOpen(true);
               }
             }}
+            onOpenPolicy={(type) => setPolicyModalType(type)}
           />
         )}
 
@@ -533,6 +542,7 @@ export default function App() {
           onClose={() => setPolicyModalType(null)}
           policyType={policyModalType}
           companyInfo={companyInfo}
+          policies={policies}
         />
       )}
     </div>

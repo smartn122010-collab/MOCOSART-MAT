@@ -16,6 +16,7 @@ import { CertificateRecord, UserProfile } from '../../types';
 import { db } from '../../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { exportCertificateToPDF, exportTableToPDF } from '../../utils/pdfExport';
+import { CertificateTemplate } from '../CertificateTemplate';
 
 interface AdminCertificateGenProps {
   certificates: CertificateRecord[];
@@ -545,65 +546,30 @@ export const AdminCertificateGen: React.FC<AdminCertificateGenProps> = ({
 
       {/* Certificate Preview Modal */}
       {previewCert && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/70 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-3xl rounded-3xl glass-panel p-6 sm:p-8 border border-white shadow-2xl overflow-hidden bg-white max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-200">
-              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">Premium Accredited Certificate</span>
-              <button onClick={() => setPreviewCert(null)} className="p-1 text-slate-400 hover:text-slate-700">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/80 backdrop-blur-md animate-in fade-in">
+          <div className="relative w-full max-w-4xl rounded-3xl glass-panel p-4 sm:p-6 border border-white shadow-2xl overflow-hidden bg-slate-50/90 max-h-[92vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-3 pb-2 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider font-cinzel">
+                  Official Certificate Preview • Blue & White Theme
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-900 border border-blue-200">
+                  {previewCert.grade} Grade
+                </span>
+              </div>
+              <button 
+                onClick={() => setPreviewCert(null)} 
+                className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Premium Certificate Framed Layout */}
-            <div className="relative p-8 rounded-2xl bg-amber-50/40 border-4 border-emerald-900 text-center space-y-4 shadow-inner ring-4 ring-amber-600/30">
-              {/* Ribbon Badge */}
-              <div className="absolute top-4 right-4">
-                <span className={`px-3.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-gradient-to-r ${getRibbonBadge(previewCert.grade)} shadow-md`}>
-                  ★ {previewCert.grade} GRADE
-                </span>
-              </div>
-
-              <div className="pt-2">
-                <h1 className="text-3xl sm:text-4xl font-black text-emerald-950 font-serif tracking-wider">MOCOSART</h1>
-                <p className="text-[11px] font-bold text-amber-700 uppercase tracking-widest mt-0.5">Institute of Digital Learning & Accreditation</p>
-                <div className="w-24 h-0.5 bg-amber-600 mx-auto mt-2" />
-              </div>
-
-              <div>
-                <p className="text-xs text-slate-500 uppercase tracking-widest font-serif italic">Certificate of Achievement & Excellence</p>
-                <p className="text-[11px] text-slate-400 mt-2 uppercase">Proudly Conferred Upon</p>
-                <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 font-serif mt-1">{previewCert.userName}</h2>
-                <div className="w-48 h-0.5 bg-emerald-500 mx-auto mt-2" />
-                <p className="text-xs text-slate-600 mt-2">For passing with distinction the official curriculum for:</p>
-                <p className="text-base font-bold text-emerald-900 font-serif mt-0.5">{previewCert.courseName}</p>
-                <div className="text-xs font-semibold text-slate-500 mt-1">
-                  Achieved Score: <b className="text-emerald-700">{previewCert.percentage}%</b>  •  ID: <span className="font-mono">{previewCert.certificateNumber}</span>
-                </div>
-              </div>
-
-              {/* Under the certificate: ONLY Founder and Co-Founder Signatures (Manually Entered) */}
-              <div className="pt-6 grid grid-cols-2 gap-6 max-w-lg mx-auto border-t border-slate-300 mt-6">
-                {/* Founder */}
-                <div className="text-center">
-                  <p className="font-serif italic text-slate-800 text-lg border-b border-slate-400 pb-1">{previewCert.founderSignature || 'Founder Signature'}</p>
-                  <p className="text-xs font-bold text-slate-900 mt-1">{previewCert.foundersName || 'Dr. Arvind Mocosart'}</p>
-                  <p className="text-[10px] text-slate-500">{previewCert.founderDesignation || 'Founder & Chancellor'}</p>
-                </div>
-
-                {/* Co-Founder */}
-                <div className="text-center">
-                  <p className="font-serif italic text-slate-800 text-lg border-b border-slate-400 pb-1">{previewCert.cofounderSignature || 'Co-Founder Signature'}</p>
-                  <p className="text-xs font-bold text-slate-900 mt-1">{previewCert.cofounderName || 'Sanjana Rao'}</p>
-                  <p className="text-[10px] text-slate-500">{previewCert.cofounderDesignation || 'Co-Founder & Operations Director'}</p>
-                </div>
-              </div>
-
-              {/* Seal */}
-              <div className="pt-2 flex items-center justify-center gap-2 text-amber-700 text-xs font-bold">
-                <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                <span>OFFICIAL VERIFIED ACCREDITATION SEAL</span>
-              </div>
-            </div>
+            {/* Official Blue & White Certificate Template with Flowing Ribbon & Cursive Typography */}
+            <CertificateTemplate 
+              cert={previewCert} 
+              onDownloadPDF={() => exportCertificateToPDF(previewCert)} 
+            />
           </div>
         </div>
       )}

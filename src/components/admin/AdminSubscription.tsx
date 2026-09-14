@@ -420,7 +420,7 @@ export const AdminSubscription: React.FC<AdminSubscriptionProps> = ({
                   rows={4}
                   value={descriptionLinesText}
                   onChange={(e) => setDescriptionLinesText(e.target.value)}
-                  placeholder="Unlimited Course Access&#10;Google Meet Weekly Live Calls&#10;Verified Diploma Certificates&#10;Priority 24/7 Mentorship"
+                  placeholder="Unlimited Course Access&#10;Google Meet Weekly Live Calls&#10;Verified Certificates&#10;Priority 24/7 Mentorship"
                   className="w-full p-2.5 rounded-xl glass-input text-xs sm:text-sm text-slate-800 font-mono"
                   required
                 />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, CheckCircle2, Info, AlertTriangle, Clock, Trash2, ChevronRight, X, ArrowRight, RotateCcw } from 'lucide-react';
+import { Bell, CheckCircle2, Info, AlertTriangle, Clock, Trash2, ChevronRight, X, ArrowRight } from 'lucide-react';
 import { AppNotification, UserProfile } from '../../types';
 
 interface NotificationViewProps {
@@ -51,11 +51,6 @@ export const NotificationView: React.FC<NotificationViewProps> = ({
     setDismissedIds(prev => [...prev, id]);
   };
 
-  // Restore cleared notifications
-  const handleRestoreCleared = () => {
-    setDismissedIds([]);
-  };
-
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Header with Clear All Button */}
@@ -70,17 +65,6 @@ export const NotificationView: React.FC<NotificationViewProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {dismissedIds.length > 0 && (
-            <button
-              onClick={handleRestoreCleared}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-600 transition-all cursor-pointer"
-              title="Restore cleared notifications"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
-              <span>Restore ({dismissedIds.length})</span>
-            </button>
-          )}
-
           {activeNotifications.length > 0 && (
             <>
               {onMarkAllRead && (
@@ -130,15 +114,6 @@ export const NotificationView: React.FC<NotificationViewProps> = ({
           <p className="text-xs text-slate-500">
             You are all caught up! All notifications have been cleared. New exam approvals and receipts will appear here.
           </p>
-          {dismissedIds.length > 0 && (
-            <button
-              onClick={handleRestoreCleared}
-              className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200 transition-all cursor-pointer"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Restore Previously Cleared Notifications</span>
-            </button>
-          )}
         </div>
       )}
     </div>

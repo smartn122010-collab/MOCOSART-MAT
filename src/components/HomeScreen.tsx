@@ -18,6 +18,7 @@ interface HomeScreenProps {
   growthMetrics?: GrowthMetric[];
   onGetStarted: () => void;
   onExploreCourses: () => void;
+  onOpenPolicy?: (type: 'terms' | 'privacy' | 'refund') => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -25,7 +26,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   founders,
   growthMetrics = [],
   onGetStarted,
-  onExploreCourses
+  onExploreCourses,
+  onOpenPolicy
 }) => {
   // Dynamic growth metrics list configured by Admin
   const activeGrowthMetrics = growthMetrics && growthMetrics.length > 0 ? growthMetrics : DEFAULT_GROWTH_METRICS;
@@ -167,6 +169,70 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             Google Sign-in • Instant Student Dashboard • Course Enrollment
           </p>
         </div>
+
+        {/* Official Legal & Policies (User click to read) */}
+        {onOpenPolicy && (
+          <div className="pt-8 border-t border-slate-200/80">
+            <div className="text-center max-w-xl mx-auto mb-4">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                Official Institutional Disclosures
+              </span>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Click any policy below to read full regulatory conditions, certification standards, and refund guidelines.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto">
+              <button
+                type="button"
+                onClick={() => onOpenPolicy('terms')}
+                className="p-3.5 rounded-xl glass-panel border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/40 text-left transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-800 transition-colors">
+                    Terms & Conditions
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+                </div>
+                <p className="text-[11px] text-slate-500 leading-snug">
+                  Rules on course access, student conduct, and verified accreditation.
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onOpenPolicy('privacy')}
+                className="p-3.5 rounded-xl glass-panel border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/40 text-left transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-800 transition-colors">
+                    Privacy Policy
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+                </div>
+                <p className="text-[11px] text-slate-500 leading-snug">
+                  Encrypted credential handling and student profile confidentiality.
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onOpenPolicy('refund')}
+                className="p-3.5 rounded-xl glass-panel border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/40 text-left transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-800 transition-colors">
+                    Refund Conditions
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+                </div>
+                <p className="text-[11px] text-slate-500 leading-snug">
+                  48-hour exam cancellation window and credit turnaround timelines.
+                </p>
+              </button>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );

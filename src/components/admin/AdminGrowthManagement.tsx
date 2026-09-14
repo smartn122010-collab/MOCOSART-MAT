@@ -86,6 +86,8 @@ export const AdminGrowthManagement: React.FC<AdminGrowthManagementProps> = ({ on
     try {
       // 1. Update localStorage immediately for fast client cache
       localStorage.setItem(storageKey, JSON.stringify(stamped));
+      localStorage.setItem('mocosart_growth_metrics_cache', JSON.stringify(stamped));
+      window.dispatchEvent(new CustomEvent('growth_metrics_updated', { detail: stamped }));
       
       // 2. Persist to Firestore
       const docRef = doc(db, 'app_settings', 'growth_metrics');

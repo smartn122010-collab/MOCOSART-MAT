@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { CertificateRecord, UserProfile } from '../../types';
 import { exportCertificateToPDF } from '../../utils/pdfExport';
+import { CertificateTemplate } from '../CertificateTemplate';
 
 interface CertificateViewProps {
   certificates: CertificateRecord[];
@@ -27,12 +28,12 @@ export const CertificateView: React.FC<CertificateViewProps> = ({
   const getGradeRibbonStyle = (grade: string) => {
     switch (grade) {
       case 'Diamond':
-        return 'from-sky-500 to-indigo-600 text-white shadow-sky-500/30';
+        return 'from-sky-400 via-cyan-400 to-blue-600 text-white shadow-sky-500/30';
       case 'Gold':
-        return 'from-amber-400 to-yellow-600 text-white shadow-amber-500/30';
+        return 'from-amber-400 via-yellow-400 to-amber-600 text-amber-950 shadow-amber-500/30';
       case 'Silver':
       default:
-        return 'from-slate-400 to-zinc-600 text-white shadow-slate-400/30';
+        return 'from-slate-300 via-gray-300 to-slate-400 text-slate-900 shadow-slate-400/30';
     }
   };
 
@@ -41,26 +42,27 @@ export const CertificateView: React.FC<CertificateViewProps> = ({
       {/* Header */}
       <div className="rounded-2xl glass-panel p-6 border border-white/80 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 font-serif">
-            Verified Certificates
+          <h2 className="text-2xl font-black text-slate-900 font-cinzel flex items-center gap-2">
+            <Award className="w-6 h-6 text-blue-800" />
+            <span>Accredited Certificates</span>
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 mt-1">
-            Official accredited diplomas issued with digital signatures and security seals.
+            Official accredited certificates issued with authentic founder signatures, flowing ribbons, and tamper-evident security seals.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-100 text-emerald-900 text-xs font-semibold border border-emerald-300">
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-blue-50 text-blue-900 text-xs font-semibold border border-blue-200">
+          <ShieldCheck className="w-4 h-4 text-blue-700" />
           <span>Tamper-Proof Verification</span>
         </div>
       </div>
 
       {/* 10-Day Notice Banner as requested by user */}
-      <div className="p-4 rounded-xl glass-panel-green border border-emerald-300/80 flex items-start gap-3 shadow-sm">
-        <Clock className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
-        <div className="text-xs text-emerald-950">
+      <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-200/80 flex items-start gap-3 shadow-sm">
+        <Clock className="w-5 h-5 text-blue-700 shrink-0 mt-0.5" />
+        <div className="text-xs text-blue-950">
           <p className="font-bold">Institutional Accreditation Regulation:</p>
-          <p className="text-emerald-900/80 leading-relaxed mt-0.5">
+          <p className="text-blue-900/80 leading-relaxed mt-0.5">
             Upon completing the exam register course, the academic board completes secondary verification within <b>10 days</b>. Your finalized certificate with founders' signatures and grade ribbons will appear here and is permanently downloadable.
           </p>
         </div>
@@ -73,32 +75,42 @@ export const CertificateView: React.FC<CertificateViewProps> = ({
             <div
               key={cert.id}
               onClick={() => setActiveCert(cert)}
-              className="relative rounded-2xl glass-card border border-white/90 p-5 shadow-sm hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between overflow-hidden group"
+              className="relative rounded-2xl bg-white border-2 border-blue-900/20 p-5 shadow-sm hover:shadow-xl hover:border-blue-700/60 transition-all cursor-pointer flex flex-col justify-between overflow-hidden group"
             >
               {/* Ribbon Badge on top left */}
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-3">
                 <span className={`px-3 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-gradient-to-r ${getGradeRibbonStyle(cert.grade)} shadow-md`}>
-                  ★ {cert.grade} Grade
+                  ★ {cert.grade} Ribbon
                 </span>
                 <span className="text-[11px] font-mono text-slate-400">
                   {cert.certificateNumber}
                 </span>
               </div>
 
-              {/* Certificate Mini Preview Box */}
-              <div className="relative p-4 rounded-xl bg-emerald-50/50 border border-emerald-200/60 mb-4 text-center group-hover:bg-emerald-100/40 transition-colors">
-                <p className="text-[10px] uppercase font-bold text-emerald-800 tracking-widest">
-                  MOCOSART
-                </p>
-                <h4 className="text-base font-bold text-slate-900 font-serif my-1">
+              {/* Certificate Mini Preview Box - Blue & White Theme */}
+              <div className="relative p-4 rounded-xl bg-gradient-to-b from-blue-50/60 via-white to-blue-50/40 border-2 border-blue-900/30 mb-4 text-center group-hover:bg-blue-100/30 transition-colors">
+                <div className="flex items-center justify-center gap-1.5 mb-1">
+                  <Sparkles className="w-3 h-3 text-blue-800" />
+                  <p className="text-[10px] uppercase font-bold text-blue-950 tracking-[0.2em] font-cinzel">
+                    MOCOSART
+                  </p>
+                  <Sparkles className="w-3 h-3 text-blue-800" />
+                </div>
+                <h4 className="text-sm font-bold text-blue-900 font-serif line-clamp-1 my-1">
                   {cert.courseName}
                 </h4>
-                <p className="text-xs text-slate-600">
-                  Awarded to <span className="font-semibold text-slate-900">{cert.userName}</span>
-                </p>
-                <div className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700">
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  Score: {cert.percentage}%
+                
+                {/* Cursive Recipient Name */}
+                <div className="my-2">
+                  <p className="text-[9px] text-slate-400 uppercase tracking-widest font-sans">Conferred Upon</p>
+                  <p className="font-cursive text-2xl text-blue-950 font-normal leading-tight">
+                    {cert.userName}
+                  </p>
+                </div>
+
+                <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-100/80 text-[10px] font-bold text-blue-900">
+                  <CheckCircle className="w-3 h-3 text-blue-700" />
+                  Final Score: {cert.percentage}%
                 </div>
               </div>
 
@@ -114,7 +126,7 @@ export const CertificateView: React.FC<CertificateViewProps> = ({
                     e.stopPropagation();
                     exportCertificateToPDF(cert);
                   }}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-900 hover:bg-blue-950 text-white text-xs font-semibold shadow-sm transition-colors cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>PDF</span>
@@ -135,117 +147,30 @@ export const CertificateView: React.FC<CertificateViewProps> = ({
 
       {/* Full Certificate Modal Display */}
       {activeCert && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-2xl glass-panel p-5 sm:p-8 border border-white shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-2xl glass-panel p-4 sm:p-6 border border-white shadow-2xl overflow-y-auto bg-slate-50/95">
             {/* Header controls */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-3">
               <div className="flex items-center gap-2">
-                <FileCheck className="w-5 h-5 text-emerald-600" />
-                <span className="text-sm font-bold text-slate-800 font-serif">Official Certificate View</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => exportCertificateToPDF(activeCert)}
-                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all cursor-pointer"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download High-Res PDF</span>
-                </button>
-                <button
-                  onClick={() => setActiveCert(null)}
-                  className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Certificate Preview Card */}
-            <div className="overflow-y-auto my-4 p-4 sm:p-8 rounded-2xl bg-amber-50/40 border-4 border-emerald-700/80 shadow-inner relative text-center space-y-6">
-              {/* Top Left Ribbon */}
-              <div className="absolute top-4 left-4">
-                <div className={`px-4 py-1.5 rounded-md text-xs font-black uppercase tracking-widest bg-gradient-to-r ${getGradeRibbonStyle(activeCert.grade)} shadow-lg`}>
-                  ★ {activeCert.grade} GRADE
-                </div>
-              </div>
-
-              <div className="absolute top-4 right-4 text-right">
-                <span className="text-[10px] font-mono text-slate-500 block">Accreditation ID</span>
-                <span className="text-xs font-mono font-bold text-slate-800">{activeCert.certificateNumber}</span>
-              </div>
-
-              {/* Company Header */}
-              <div className="pt-8 space-y-1">
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-emerald-950 font-serif tracking-wider">
-                  MOCOSART
-                </h1>
-                <p className="text-[11px] sm:text-xs uppercase font-bold text-emerald-700 tracking-widest">
-                  Institute of Digital Learning & Verified Accreditation
-                </p>
-                <div className="w-24 h-0.5 bg-emerald-500 mx-auto mt-2" />
-              </div>
-
-              {/* Certificate Title */}
-              <div>
-                <h3 className="text-xl sm:text-2xl font-serif italic text-slate-800">
-                  Certificate of Achievement & Excellence
-                </h3>
-                <p className="text-xs uppercase tracking-wider text-slate-500 mt-2 font-sans">
-                  This is proudly presented to
-                </p>
-              </div>
-
-              {/* Recipient */}
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-serif uppercase tracking-wide">
-                  {activeCert.userName}
-                </h2>
-                <div className="w-48 h-0.5 bg-emerald-600/40 mx-auto mt-1.5" />
-              </div>
-
-              {/* Description */}
-              <p className="text-xs sm:text-sm text-slate-700 max-w-xl mx-auto leading-relaxed">
-                has demonstrated exceptional competence and successfully passed the rigorous examination curriculum for{' '}
-                <span className="font-bold text-emerald-800 block text-base sm:text-lg font-serif mt-1">
-                  {activeCert.courseName}
+                <FileCheck className="w-5 h-5 text-blue-900" />
+                <span className="text-sm font-bold text-slate-900 font-cinzel">Official Accredited Certificate</span>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-950">
+                  {activeCert.grade} Grade
                 </span>
-              </p>
-
-              <div className="inline-flex items-center gap-4 px-4 py-1.5 rounded-xl bg-white/80 border border-emerald-200 text-xs text-slate-700">
-                <span>Final Score: <b>{activeCert.percentage}%</b></span>
-                <span>•</span>
-                <span>Date: <b>{new Date(activeCert.issuedAt).toLocaleDateString()}</b></span>
               </div>
-
-              {/* Footer Signatures */}
-              <div className="pt-8 grid grid-cols-3 items-end max-w-2xl mx-auto">
-                {/* Founder 1 */}
-                <div className="text-center">
-                  <div className="font-serif italic text-base sm:text-lg text-slate-900 mb-1 border-b border-slate-400 pb-1">
-                    {activeCert.founderSignature || 'Arvind Mocosart'}
-                  </div>
-                  <p className="text-xs font-bold text-slate-900">{activeCert.foundersName || 'Dr. Arvind Mocosart'}</p>
-                  <p className="text-[10px] text-slate-500">Chief Academic Officer</p>
-                </div>
-
-                {/* Seal */}
-                <div className="flex flex-col items-center justify-center">
-                  <div className="w-14 h-14 rounded-full border-2 border-emerald-600 bg-emerald-50 flex flex-col items-center justify-center text-emerald-800 shadow-sm">
-                    <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                    <span className="text-[8px] font-bold uppercase tracking-tighter">VERIFIED</span>
-                  </div>
-                </div>
-
-                {/* Founder 2 */}
-                <div className="text-center">
-                  <div className="font-serif italic text-base sm:text-lg text-slate-900 mb-1 border-b border-slate-400 pb-1">
-                    Sanjana Rao
-                  </div>
-                  <p className="text-xs font-bold text-slate-900">Sanjana Rao</p>
-                  <p className="text-[10px] text-slate-500">Head of Operations</p>
-                </div>
-              </div>
+              <button
+                onClick={() => setActiveCert(null)}
+                className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
+
+            {/* Certificate Template Display */}
+            <CertificateTemplate 
+              cert={activeCert} 
+              onDownloadPDF={() => exportCertificateToPDF(activeCert)} 
+            />
           </div>
         </div>
       )}

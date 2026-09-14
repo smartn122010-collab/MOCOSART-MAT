@@ -201,7 +201,8 @@ export function exportTableToCSV(filename: string, headers: string[], rows: (str
 
 /**
  * Downloads Premium Mocosart Certificate as PDF
- * Under the certificate: ONLY Founder and Co-Founder signatures (manually entered by Admin, NOT auto detected)
+ * Blue & White design with cursive lettering, top flowing ribbon (Gold / Diamond / Silver), 
+ * embossed metallic rosette seal with ribbon tails, and manually-entered Founder & Co-Founder signatures.
  */
 export function exportCertificateToPDF(cert: CertificateRecord) {
   const doc = new jsPDF({
@@ -212,136 +213,216 @@ export function exportCertificateToPDF(cert: CertificateRecord) {
 
   const width = 842;
   const height = 595;
+  const grade = cert.grade || 'Gold';
 
-  // Background Cream Paper Tint
-  doc.setFillColor(254, 254, 252);
+  // Palette definitions based on Ribbon Flow (Gold / Diamond / Silver)
+  const isDiamond = grade === 'Diamond';
+  const isSilver = grade === 'Silver';
+  const isGold = !isDiamond && !isSilver;
+
+  // Primary Metallic Accent Colors
+  const metallicPrimary = isDiamond 
+    ? [2, 132, 199] // Deep Azure / Cyan
+    : isSilver 
+      ? [100, 116, 139] // Polished Slate
+      : [217, 119, 6]; // Radiant Gold
+
+  const metallicLight = isDiamond
+    ? [224, 242, 254] // Sky Ice
+    : isSilver
+      ? [241, 245, 249] // Chrome White
+      : [254, 240, 138]; // Pale Gold
+
+  const metallicDark = isDiamond
+    ? [3, 105, 161]
+    : isSilver
+      ? [71, 85, 105]
+      : [180, 83, 9];
+
+  // 1. Pristine White Background
+  doc.setFillColor(255, 255, 255);
   doc.rect(0, 0, width, height, 'F');
 
-  // Outer Deep Emerald Border
-  doc.setDrawColor(6, 78, 59); // Deep Emerald 900
-  doc.setLineWidth(7);
-  doc.rect(20, 20, width - 40, height - 40);
+  // 2. Multi-tier Royal Blue & White Borders
+  // Outer Royal Blue Frame (Deep Sapphire 900)
+  doc.setDrawColor(26, 54, 138);
+  doc.setLineWidth(10);
+  doc.rect(18, 18, width - 36, height - 36);
 
-  // Inner Ornate Gold/Bronze Border
-  doc.setDrawColor(180, 142, 60); // Vintage Gold
+  // Inner Metallic Gold/Diamond/Silver Accent Line
+  doc.setDrawColor(metallicPrimary[0], metallicPrimary[1], metallicPrimary[2]);
   doc.setLineWidth(2);
-  doc.rect(28, 28, width - 56, height - 56);
+  doc.rect(26, 26, width - 52, height - 52);
 
-  // Thin Accent Border
-  doc.setDrawColor(16, 185, 129); // Emerald 500
+  // Delicate Navy Thin Pinstripe
+  doc.setDrawColor(30, 58, 138);
   doc.setLineWidth(0.8);
-  doc.rect(34, 34, width - 68, height - 68);
+  doc.rect(31, 31, width - 62, height - 62);
 
-  // Corner Ornaments
-  const cornerSize = 18;
-  const corners = [
-    { x: 38, y: 38 },
-    { x: width - 38 - cornerSize, y: 38 },
-    { x: 38, y: height - 38 - cornerSize },
-    { x: width - 38 - cornerSize, y: height - 38 - cornerSize }
+  // Corner Ornaments (Royal Blue & Metallic squares with diamond cross)
+  const cornerSize = 14;
+  const cornerPositions = [
+    { x: 35, y: 35 },
+    { x: width - 35 - cornerSize, y: 35 },
+    { x: 35, y: height - 35 - cornerSize },
+    { x: width - 35 - cornerSize, y: height - 35 - cornerSize }
   ];
-  doc.setFillColor(180, 142, 60);
-  corners.forEach(c => {
+  cornerPositions.forEach(c => {
+    doc.setFillColor(26, 54, 138);
     doc.rect(c.x, c.y, cornerSize, cornerSize, 'F');
+    doc.setFillColor(metallicLight[0], metallicLight[1], metallicLight[2]);
+    doc.circle(c.x + cornerSize / 2, c.y + cornerSize / 2, 3, 'F');
   });
 
-  // Ribbon Badge - Top Right
-  const gradeColor = cert.grade === 'Diamond' ? [14, 165, 233] : cert.grade === 'Gold' ? [217, 119, 6] : [100, 116, 139];
-  doc.setFillColor(gradeColor[0], gradeColor[1], gradeColor[2]);
-  doc.rect(width - 170, 42, 120, 28, 'F');
+  // 3. TOP FLOWING RIBBON BANNER (Gold / Diamond / Silver Flow)
+  const ribbonWidth = 320;
+  const ribbonHeight = 30;
+  const ribbonX = (width - ribbonWidth) / 2;
+  const ribbonY = 32;
+
+  // Left Ribbon Wing (Folded 3D effect)
+  doc.setFillColor(metallicDark[0], metallicDark[1], metallicDark[2]);
+  doc.triangle(ribbonX - 25, ribbonY + 28, ribbonX, ribbonY + 6, ribbonX, ribbonY + 28, 'F');
+  doc.setFillColor(metallicPrimary[0], metallicPrimary[1], metallicPrimary[2]);
+  doc.rect(ribbonX - 45, ribbonY + 6, 45, 22, 'F');
+  // Left Swallowtail cut
+  doc.setFillColor(255, 255, 255);
+  doc.triangle(ribbonX - 45, ribbonY + 6, ribbonX - 35, ribbonY + 17, ribbonX - 45, ribbonY + 28, 'F');
+
+  // Right Ribbon Wing (Folded 3D effect)
+  doc.setFillColor(metallicDark[0], metallicDark[1], metallicDark[2]);
+  doc.triangle(ribbonX + ribbonWidth + 25, ribbonY + 28, ribbonX + ribbonWidth, ribbonY + 6, ribbonX + ribbonWidth, ribbonY + 28, 'F');
+  doc.setFillColor(metallicPrimary[0], metallicPrimary[1], metallicPrimary[2]);
+  doc.rect(ribbonX + ribbonWidth, ribbonY + 6, 45, 22, 'F');
+  // Right Swallowtail cut
+  doc.setFillColor(255, 255, 255);
+  doc.triangle(ribbonX + ribbonWidth + 45, ribbonY + 6, ribbonX + ribbonWidth + 35, ribbonY + 17, ribbonX + ribbonWidth + 45, ribbonY + 28, 'F');
+
+  // Center Flowing Ribbon Body
+  doc.setFillColor(metallicPrimary[0], metallicPrimary[1], metallicPrimary[2]);
+  doc.roundedRect(ribbonX, ribbonY, ribbonWidth, ribbonHeight, 3, 3, 'F');
+  doc.setDrawColor(metallicLight[0], metallicLight[1], metallicLight[2]);
+  doc.setLineWidth(1);
+  doc.roundedRect(ribbonX + 2, ribbonY + 2, ribbonWidth - 4, ribbonHeight - 4, 2, 2, 'S');
+
+  // Ribbon Text
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
-  doc.text(`★ ${cert.grade.toUpperCase()} GRADE`, width - 110, 60, { align: 'center' });
-
-  // Center Company Header
-  doc.setTextColor(6, 78, 59);
-  doc.setFontSize(30);
-  doc.setFont('times', 'bold');
-  doc.text('MOCOSART', width / 2, 88, { align: 'center' });
-
   doc.setFontSize(10.5);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(180, 142, 60);
-  doc.text('INSTITUTE OF DIGITAL LEARNING & ACCREDITATION', width / 2, 108, { align: 'center' });
+  doc.text(`★  ${grade.toUpperCase()} ACCREDITED CERTIFICATE  ★`, width / 2, ribbonY + 19, { align: 'center' });
+
+  // 4. Institution Header: MOCOSART (Royal Blue & White Theme)
+  doc.setTextColor(26, 54, 138); // Deep Royal Blue
+  doc.setFontSize(30);
+  doc.setFont('times', 'bold');
+  doc.text('MOCOSART', width / 2, 104, { align: 'center' });
+
+  doc.setFontSize(9.5);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(metallicPrimary[0], metallicPrimary[1], metallicPrimary[2]);
+  doc.text('INTERNATIONAL INSTITUTE OF EDUCATIONAL ACCREDITATION', width / 2, 122, { align: 'center' });
 
   // Horizontal Accent Divider
-  doc.setDrawColor(180, 142, 60);
-  doc.setLineWidth(1);
-  doc.line(width / 2 - 120, 118, width / 2 + 120, 118);
+  doc.setDrawColor(26, 54, 138);
+  doc.setLineWidth(0.8);
+  doc.line(width / 2 - 140, 130, width / 2 + 140, 130);
 
-  // Certificate Title
+  // 5. Certificate Title
   doc.setTextColor(30, 41, 59);
   doc.setFontSize(22);
   doc.setFont('times', 'italic');
-  doc.text('Certificate of Achievement & Excellence', width / 2, 160, { align: 'center' });
+  doc.text('Certificate of Achievement & Excellence', width / 2, 165, { align: 'center' });
 
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(148, 163, 184);
+  doc.text('THIS IS PROUDLY CONFERRED UPON', width / 2, 194, { align: 'center' });
+
+  // 6. CANDIDATE NAME - GRAND CURSIVE SCRIPT
+  doc.setTextColor(15, 23, 85); // Deep Royal Navy
+  doc.setFontSize(32);
+  doc.setFont('times', 'bolditalic');
+  doc.text(cert.userName, width / 2, 238, { align: 'center' });
+
+  // Elegant Calligraphic Underline with Jewel Diamond Center
+  doc.setDrawColor(26, 54, 138);
+  doc.setLineWidth(1.2);
+  doc.line(width / 2 - 180, 248, width / 2 + 180, 248);
+  doc.setFillColor(metallicPrimary[0], metallicPrimary[1], metallicPrimary[2]);
+  doc.circle(width / 2, 248, 3.5, 'F');
+
+  // 7. Course & Certification Context
   doc.setFontSize(11);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(100, 116, 139);
-  doc.text('THIS IS PROUDLY CONFERRED UPON', width / 2, 192, { align: 'center' });
-
-  // Recipient Name
-  doc.setTextColor(15, 23, 42);
-  doc.setFontSize(28);
-  doc.setFont('times', 'bold');
-  doc.text(cert.userName.toUpperCase(), width / 2, 236, { align: 'center' });
-
-  // Underline
-  doc.setDrawColor(16, 185, 129);
-  doc.setLineWidth(1.5);
-  doc.line(width / 2 - 180, 246, width / 2 + 180, 246);
-
-  // Description & Course
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont('times', 'normal');
   doc.setTextColor(71, 85, 105);
-  const textBody = 'for demonstrated proficiency and successful completion of official curriculum assessments in';
-  doc.text(textBody, width / 2, 278, { align: 'center' });
+  doc.text(
+    'for demonstrated distinguished excellence and mastery in the comprehensive academic curriculum of',
+    width / 2,
+    276,
+    { align: 'center' }
+  );
 
-  doc.setTextColor(6, 78, 59);
+  doc.setTextColor(26, 54, 138); // Royal Blue
   doc.setFontSize(18);
   doc.setFont('times', 'bold');
-  doc.text(cert.courseName, width / 2, 306, { align: 'center' });
+  doc.text(cert.courseName, width / 2, 302, { align: 'center' });
 
-  // Percentage and Status
-  doc.setFontSize(11);
+  // Performance Badge Row
+  doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(100, 116, 139);
   doc.text(
-    `Performance Score: ${cert.percentage}%   •   Certificate ID: ${cert.certificateNumber}   •   Issue Date: ${new Date(cert.issuedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`,
+    `Performance Score: ${cert.percentage}%   •   Accreditation ID: ${cert.certificateNumber}   •   Date: ${new Date(cert.issuedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`,
     width / 2,
-    334,
+    328,
     { align: 'center' }
   );
 
   if (cert.description) {
-    doc.setFontSize(9.5);
+    doc.setFontSize(9);
+    doc.setFont('times', 'italic');
     doc.setTextColor(120, 130, 145);
-    doc.text(cert.description, width / 2, 360, { align: 'center', maxWidth: 540 });
+    doc.text(`"${cert.description}"`, width / 2, 350, { align: 'center', maxWidth: 540 });
   }
 
-  // Bottom Center: Official Seal
-  const footerY = 475;
-  doc.setFillColor(254, 249, 240);
-  doc.circle(width / 2, footerY - 10, 38, 'F');
-  doc.setDrawColor(180, 142, 60);
-  doc.setLineWidth(2);
-  doc.circle(width / 2, footerY - 10, 38, 'S');
+  // 8. SIGNATURES & OFFICIAL METALLIC ROSETTE SEAL
+  const footerY = 478;
 
+  // Center: Embossed Rosette Seal with Downward Ribbon Tails
+  const sealCenterX = width / 2;
+  const sealCenterY = footerY - 14;
+
+  // Hanging Ribbon Tails
+  doc.setFillColor(metallicDark[0], metallicDark[1], metallicDark[2]);
+  // Left Tail
+  doc.triangle(sealCenterX - 18, sealCenterY + 20, sealCenterX - 8, sealCenterY + 45, sealCenterX - 24, sealCenterY + 48, 'F');
+  // Right Tail
+  doc.triangle(sealCenterX + 18, sealCenterY + 20, sealCenterX + 8, sealCenterY + 45, sealCenterX + 24, sealCenterY + 48, 'F');
+
+  // Seal Rosette Outer Circle (Metallic)
+  doc.setFillColor(metallicPrimary[0], metallicPrimary[1], metallicPrimary[2]);
+  doc.circle(sealCenterX, sealCenterY, 34, 'F');
+
+  // Seal Inner Ring
+  doc.setFillColor(metallicLight[0], metallicLight[1], metallicLight[2]);
+  doc.circle(sealCenterX, sealCenterY, 28, 'F');
+  doc.setDrawColor(metallicDark[0], metallicDark[1], metallicDark[2]);
+  doc.setLineWidth(1);
+  doc.circle(sealCenterX, sealCenterY, 25, 'S');
+
+  // Seal Text
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8.5);
-  doc.setTextColor(180, 142, 60);
-  doc.text('OFFICIAL SEAL', width / 2, footerY - 16, { align: 'center' });
-  doc.setFontSize(11);
-  doc.text('★ ★ ★', width / 2, footerY - 5, { align: 'center' });
-  doc.setFontSize(8);
-  doc.setTextColor(6, 78, 59);
-  doc.text('ACCREDITED', width / 2, footerY + 8, { align: 'center' });
+  doc.setFontSize(7.5);
+  doc.setTextColor(metallicDark[0], metallicDark[1], metallicDark[2]);
+  doc.text('VERIFIED', sealCenterX, sealCenterY - 6, { align: 'center' });
+  doc.setFontSize(9);
+  doc.text('★ ★ ★', sealCenterX, sealCenterY + 3, { align: 'center' });
+  doc.setFontSize(6.5);
+  doc.text('OFFICIAL SEAL', sealCenterX, sealCenterY + 12, { align: 'center' });
 
-  // ONLY TWO SIGNATURES UNDER THE CERTIFICATE (Manually entered by Admin):
-  // 1. Founder Signature (Left)
-  const founderName = cert.foundersName || 'Founder Signature';
+  // ONLY TWO SIGNATURES (Manually entered by Admin):
+  // 1. Founder Cursive Signature (Left)
+  const founderName = cert.foundersName || 'Dr. Arvind Mocosart';
   const founderTitle = cert.founderDesignation || 'Founder & Chancellor';
   const founderSig = cert.founderSignature || founderName;
 
@@ -349,12 +430,13 @@ export function exportCertificateToPDF(cert: CertificateRecord) {
   doc.setLineWidth(1);
   doc.line(90, footerY, 280, footerY);
 
-  doc.setFont('times', 'italic');
-  doc.setFontSize(16);
-  doc.setTextColor(30, 41, 59);
+  // Cursive Signature Representation (Grand Italic Script)
+  doc.setFont('times', 'bolditalic');
+  doc.setFontSize(18);
+  doc.setTextColor(26, 54, 138); // Royal Blue Signature Ink
   doc.text(founderSig, 185, footerY - 8, { align: 'center' });
 
-  doc.setFont('helvetica', 'bold');
+  doc.setFont('times', 'bold');
   doc.setFontSize(10.5);
   doc.setTextColor(15, 23, 42);
   doc.text(founderName, 185, footerY + 16, { align: 'center' });
@@ -364,19 +446,20 @@ export function exportCertificateToPDF(cert: CertificateRecord) {
   doc.setTextColor(100, 116, 139);
   doc.text(founderTitle, 185, footerY + 28, { align: 'center' });
 
-  // 2. Co-Founder Signature (Right)
-  const cofounderName = cert.cofounderName || 'Co-Founder Signature';
-  const cofounderTitle = cert.cofounderDesignation || 'Co-Founder & Director';
+  // 2. Co-Founder Cursive Signature (Right)
+  const cofounderName = cert.cofounderName || 'Sanjana Rao';
+  const cofounderTitle = cert.cofounderDesignation || 'Co-Founder & Operations Director';
   const cofounderSig = cert.cofounderSignature || cofounderName;
 
   doc.line(width - 280, footerY, width - 90, footerY);
 
-  doc.setFont('times', 'italic');
-  doc.setFontSize(16);
-  doc.setTextColor(30, 41, 59);
+  // Cursive Signature Representation
+  doc.setFont('times', 'bolditalic');
+  doc.setFontSize(18);
+  doc.setTextColor(26, 54, 138); // Royal Blue Signature Ink
   doc.text(cofounderSig, width - 185, footerY - 8, { align: 'center' });
 
-  doc.setFont('helvetica', 'bold');
+  doc.setFont('times', 'bold');
   doc.setFontSize(10.5);
   doc.setTextColor(15, 23, 42);
   doc.text(cofounderName, width - 185, footerY + 16, { align: 'center' });
@@ -385,6 +468,12 @@ export function exportCertificateToPDF(cert: CertificateRecord) {
   doc.setFontSize(8.5);
   doc.setTextColor(100, 116, 139);
   doc.text(cofounderTitle, width - 185, footerY + 28, { align: 'center' });
+
+  // Bottom Watermark / Tamper Proof
+  doc.setFontSize(7.5);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(160, 175, 195);
+  doc.text('Tamper-evident credential issued via Mocosart Accreditation Protocol', width / 2, height - 25, { align: 'center' });
 
   const safeUserName = cert.userName.trim().replace(/[^a-zA-Z0-9]/g, '_');
   doc.save(`Mocosart_Certificate_${safeUserName}.pdf`);

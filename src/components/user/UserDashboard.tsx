@@ -31,6 +31,7 @@ import {
   SubscriptionRecord,
   PaymentMethod,
   GrowthMetric,
+  DEFAULT_GROWTH_METRICS,
   isUserAdmin 
 } from '../../types';
 import { SearchCourseView } from './SearchCourseView';
@@ -301,7 +302,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                     <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-serif block mt-0.5">
                       {userCertificatesCount}
                     </span>
-                    <span className="text-[10px] text-indigo-700 font-medium">Signed diplomas issued</span>
+                    <span className="text-[10px] text-indigo-700 font-medium">Signed certificates issued</span>
                   </div>
                 </div>
               </div>
@@ -331,80 +332,65 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                   </span>
                 </div>
 
-                {/* 3 Core Growth Metrics: Student Learning+, Verified Certificate, Percentage Course Level */}
+                {/* Admin Manually Configured Growth Metrics: Student Learning+, Verified Certificate, Percentage Course Level */}
                 {(() => {
-                  const learningStat = growthMetrics.find(m => m.category === 'learning' || m.id.includes('learning')) || {
-                    title: 'Student Learning+',
-                    value: '1,500+',
-                    subtitle: 'Active certified learners enrolled in continuous career modules'
-                  };
-                  const certificateStat = growthMetrics.find(m => m.category === 'certificate' || m.id.includes('certificate')) || {
-                    title: 'Verified Certificates',
-                    value: '890+',
-                    subtitle: 'Digitally verified credentials issued with QR authentication'
-                  };
-                  const percentageStat = growthMetrics.find(m => m.category === 'percentage' || m.id.includes('percentage') || m.id.includes('level')) || {
-                    title: 'Percentage Course Level',
-                    value: '96.4%',
-                    subtitle: 'Overall cohort assessment mastery and practical exam pass rate',
-                    courseLevelStats: { beginner: 98, intermediate: 95, advanced: 92, master: 89 }
-                  };
+                  const displayMetrics = growthMetrics && growthMetrics.length > 0 ? growthMetrics : DEFAULT_GROWTH_METRICS;
+                  const percentageStat = displayMetrics.find(m => m.category === 'percentage' || m.courseLevelStats);
 
                   return (
                     <div className="space-y-4 pt-1">
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div className="p-4 rounded-xl bg-white/75 border border-emerald-100 shadow-sm text-center">
-                          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                            {learningStat.title}
-                          </span>
-                          <span className="text-2xl font-extrabold text-emerald-800 font-serif block mt-1">
-                            {learningStat.value}
-                          </span>
-                          <p className="text-[10px] text-slate-500 mt-1 line-clamp-1">{learningStat.subtitle}</p>
-                        </div>
+                      <div className={`grid grid-cols-1 sm:grid-cols-${Math.min(displayMetrics.length, 3)} gap-3`}>
+                        {displayMetrics.map((stat, idx) => {
+                          const colors = [
+                            { border: 'border-emerald-100', text: 'text-emerald-800' },
+                            { border: 'border-teal-100', text: 'text-teal-800' },
+                            { border: 'border-indigo-100', text: 'text-indigo-800' },
+                            { border: 'border-blue-100', text: 'text-blue-800' }
+                          ];
+                          const color = colors[idx % colors.length];
 
-                        <div className="p-4 rounded-xl bg-white/75 border border-teal-100 shadow-sm text-center">
-                          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                            {certificateStat.title}
-                          </span>
-                          <span className="text-2xl font-extrabold text-teal-800 font-serif block mt-1">
-                            {certificateStat.value}
-                          </span>
-                          <p className="text-[10px] text-slate-500 mt-1 line-clamp-1">{certificateStat.subtitle}</p>
-                        </div>
-
-                        <div className="p-4 rounded-xl bg-white/75 border border-indigo-100 shadow-sm text-center">
-                          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                            {percentageStat.title}
-                          </span>
-                          <span className="text-2xl font-extrabold text-indigo-800 font-serif block mt-1">
-                            {percentageStat.value}
-                          </span>
-                          <p className="text-[10px] text-slate-500 mt-1 line-clamp-1">{percentageStat.subtitle}</p>
-                        </div>
+                          return (
+                            <div key={stat.id || idx} className={`p-4 rounded-xl bg-white/75 border ${color.border} shadow-sm text-center`}>
+                              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                                {stat.title}
+                              </span>
+                              <span className={`text-2xl font-extrabold ${color.text} font-serif block mt-1`}>
+                                {stat.value}
+                              </span>
+                              {stat.subtitle && (
+                                <p className="text-[10px] text-slate-500 mt-1 line-clamp-1">{stat.subtitle}</p>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
 
-                      {/* Course Level Percentage Breakdown */}
-                      {percentageStat.courseLevelStats && (
+                      {/* Course Level Percentage Breakdown if defined by admin */}
+                      {percentageStat && percentageStat.courseLevelStats && (
                         <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-2.5">
-                          <span className="text-xs font-bold text-slate-800 block">
-                            Percentage by Course Level:
-                          </span>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-slate-800">
+                              {percentageStat.title} — Level Breakdown:
+                            </span>
+                            <span className="text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                              Overall: {percentageStat.value}
+                            </span>
+                          </div>
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
                             <div className="p-2 rounded-lg bg-white border border-slate-200">
-                              <span className="text-slate-500 block text-[10px] uppercase">Beginner</span>
+                              <span className="text-slate-500 block text-[10px] uppercase font-medium">Beginner</span>
                               <span className="font-bold text-slate-900">{percentageStat.courseLevelStats.beginner}%</span>
                             </div>
                             <div className="p-2 rounded-lg bg-white border border-slate-200">
-                              <span className="text-slate-500 block text-[10px] uppercase">Intermediate</span>
+                              <span className="text-slate-500 block text-[10px] uppercase font-medium">Intermediate</span>
                               <span className="font-bold text-slate-900">{percentageStat.courseLevelStats.intermediate}%</span>
                             </div>
                             <div className="p-2 rounded-lg bg-white border border-slate-200">
-                              <span className="text-slate-500 block text-[10px] uppercase">Advanced</span>
+                              <span className="text-slate-500 block text-[10px] uppercase font-medium">Advanced</span>
                               <span className="font-bold text-slate-900">{percentageStat.courseLevelStats.advanced}%</span>
                             </div>
                             <div className="p-2 rounded-lg bg-white border border-slate-200">
-                              <span className="text-slate-500 block text-[10px] uppercase">Master</span>
+                              <span className="text-slate-500 block text-[10px] uppercase font-medium">Master</span>
                               <span className="font-bold text-slate-900">{percentageStat.courseLevelStats.master}%</span>
                             </div>
                           </div>

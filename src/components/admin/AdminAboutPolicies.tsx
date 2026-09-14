@@ -147,10 +147,24 @@ export const AdminAboutPolicies: React.FC<AdminAboutPoliciesProps> = ({
 
     try {
       localStorage.setItem(`mocosart_${type}_policy`, JSON.stringify(policyPayload));
+      // Also update local cached company info
+      const cached = localStorage.getItem('mocosart_manual_company_info');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (type === 'terms') parsed.termsAndConditions = content;
+        if (type === 'privacy') parsed.privacyPolicy = content;
+        if (type === 'refund') parsed.refundPolicy = content;
+        localStorage.setItem('mocosart_manual_company_info', JSON.stringify(parsed));
+      }
     } catch {}
 
     try {
-      await setDoc(doc(db, 'policies', type), policyPayload, { merge: true });
+      const companyKey = type === 'terms' ? 'termsAndConditions' : type === 'privacy' ? 'privacyPolicy' : 'refundPolicy';
+      await Promise.all([
+        setDoc(doc(db, 'policies', type), policyPayload, { merge: true }),
+        setDoc(doc(db, 'settings', 'companyInfo'), { [companyKey]: content }, { merge: true }),
+        setDoc(doc(db, 'settings', 'company_info'), { [companyKey]: content }, { merge: true })
+      ]);
       setSaveSuccess(`${type.toUpperCase()} Policy successfully updated & saved permanently!`);
       onRefresh();
     } catch (err) {
